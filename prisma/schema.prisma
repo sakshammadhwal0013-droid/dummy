@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String    @unique
+  password  String
+  role      String    @default("CUSTOMER") // CUSTOMER, STAFF, ADMIN
+  phone     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  bookings  Booking[]
+}
+
+model TourPackage {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String?
+  price       Float
+  duration    String?
+  destination String
+  image       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Hotel {
+  id          Int       @id @default(autoincrement())
+  name        String
+  location    String
+  description String?
+  pricePerNight Float
+  amenities   String?
+  image       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Booking {
+  id          Int      @id @default(autoincrement())
+  bookingId   String   @unique
+  userId      Int
+  type        String   // FLIGHT, HOTEL, TOUR, TRAIN, BUS, CAB, CRUISE
+  title       String
+  destination String
+  status      String   @default("Pending") // Pending, Confirmed, Cancelled
+  date        String
+  amount      String
+  paymentId   Int?     @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id])
+  payment     Payment? @relation(fields: [paymentId], references: [id])
+}
+
+model Payment {
+  id            Int      @id @default(autoincrement())
+  razorpayId    String?  @unique
+  amount        Float
+  status        String   @default("SUCCESS") // SUCCESS, FAILED, REFUNDED
+  method        String   // UPI, CARD, NETBANKING
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  booking       Booking?
+}
+
+model Invoice {
+  id            Int      @id @default(autoincrement())
+  invoiceNumber String   @unique
+  bookingId     String
+  amount        Float
+  pdfUrl        String?
+  createdAt     DateTime @default(now())
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  type      String   // EMAIL, WHATSAPP, IN_APP
+  message   String
+  status    String   @default("SENT")
+  createdAt DateTime @default(now())
+}
+
+model Report {
+  id        Int      @id @default(autoincrement())
+  name      String
+  type      String   // EXCEL, PDF
+  url       String
+  createdAt DateTime @default(now())
+}

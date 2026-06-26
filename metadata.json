@@ -1,0 +1,6 @@
+{
+  "name": "Safarnama",
+  "description": "A premium travel and booking portal offering flights, hotels, and tours.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
